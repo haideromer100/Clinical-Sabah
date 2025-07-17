@@ -1,4 +1,6 @@
 # Clinical-Sabah
+ codex/add-license-section-linking-to-mit-license
+Desktop app for dental clinic management: register patients, log visits, upload x-rays/lab files, print reports. Built with Python &amp; PyQt. Secure login. Ideal for clinics and demo use.
 
 Clinical-Sabah is a desktop application for managing dental clinic operations. Built with Python & PyQt, it lets staff securely log in, register patients, log visits, upload x-rays and lab files, and print detailed reports.
 
@@ -42,3 +44,4 @@ Pull requests and bug reports are welcome. Feel free to open an issue or submit 
 
 ## License
 This project is licensed under the MIT License. See LICENSE for details.
+main
