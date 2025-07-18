@@ -16,7 +16,8 @@ def init_schema(db_path: Path = DB_PATH) -> None:
         with get_connection(db_path) as conn:
             create_tables(conn)
             # Create default admin user with password 'admin'
+            pwd_hash, salt = hash_password("admin")
             conn.execute(
                 "INSERT INTO users (username, password) VALUES (?, ?)",
-                ("admin", hash_password("admin")),
+                ("admin", f"{pwd_hash}:{salt}"),
             )

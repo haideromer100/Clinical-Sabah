@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (
 from ..database.database_manager import get_connection
 from ..utils.security import verify_password
 from .main_window import MainWindow
+from .registration_window import RegistrationWindow
 
 
 class LoginWindow(QDialog):
@@ -27,27 +28,44 @@ class LoginWindow(QDialog):
         self.password.setEchoMode(QLineEdit.Password)
         login_btn = QPushButton("Login")
         login_btn.clicked.connect(self.handle_login)
+        register_btn = QPushButton("Create Account")
+        register_btn.clicked.connect(self.open_registration)
+
+        self.password.returnPressed.connect(self.handle_login)
+
+        self.username.returnPressed.connect(self.handle_login)
+        register_btn.setAutoDefault(False)
 
         layout = QFormLayout(self)
         layout.addRow("Username", self.username)
         layout.addRow("Password", self.password)
-        layout.addRow(login_btn)
+        layout.addRow(login_btn, register_btn)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.username.setFocus()
 
     def handle_login(self) -> None:
         username = self.username.text()
         pwd = self.password.text()
         with get_connection() as conn:
             row = conn.execute(
-                "SELECT password FROM users WHERE username=?", (username,)
+                "SELECT password FROM users WHERE username=?",
+                (username,),
             ).fetchone()
-        if row and verify_password(pwd, row[0]):
-            self.accept()
-            self.main_win = MainWindow()
-            self.main_win.show()
-            self.close()
-        else:
-            self.shake()
-            QMessageBox.warning(self, "Error", "Invalid credentials")
+        if row:
+            stored_hash, salt = row[0].split(":")
+            if verify_password(pwd, stored_hash, salt):
+                self.accept()
+                self.main_win = MainWindow()
+                self.main_win.show()
+                self.close()
+                return
+        self.shake()
+        QMessageBox.warning(self, "Error", "Invalid credentials")
+
+    def open_registration(self) -> None:
+        RegistrationWindow(self).exec_()
 
     def shake(self) -> None:
         animation = QPropertyAnimation(self, b"pos")

@@ -41,3 +41,34 @@ def create_tables(conn: sqlite3.Connection) -> None:
         );
         """
     )
+
+
+def user_exists(username: str) -> bool:
+    """Return True if a user with ``username`` exists."""
+    from .database_manager import DB_PATH, get_connection
+
+    with get_connection(DB_PATH) as conn:
+        row = conn.execute(
+            "SELECT 1 FROM users WHERE username=?",
+            (username,),
+        ).fetchone()
+    return row is not None
+
+
+def create_user(username: str, password_plain: str) -> bool:
+    """Create a user if it doesn't exist. Return ``True`` on success."""
+    from ..utils.security import hash_password
+    from .database_manager import DB_PATH, get_connection
+
+    if user_exists(username):
+        return False
+    pwd_hash, salt = hash_password(password_plain)
+    try:
+        with get_connection(DB_PATH) as conn:
+            conn.execute(
+                "INSERT INTO users (username, password) VALUES (?, ?)",
+                (username, f"{pwd_hash}:{salt}"),
+            )
+        return True
+    except sqlite3.IntegrityError:
+        return False
