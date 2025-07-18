@@ -17,26 +17,37 @@ def create_tables(conn: sqlite3.Connection) -> None:
 
         CREATE TABLE IF NOT EXISTS patients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            serial_no TEXT UNIQUE,
             name TEXT NOT NULL,
             age INTEGER,
-            gender TEXT,
-            contact TEXT
+            sex TEXT,
+            phone TEXT,
+            marital_status TEXT,
+            chief_complaint TEXT,
+            medical_history TEXT,
+            drug_taken TEXT,
+            created_date TEXT DEFAULT CURRENT_TIMESTAMP,
+            last_modified TEXT DEFAULT CURRENT_TIMESTAMP,
+            created_by TEXT
         );
 
         CREATE TABLE IF NOT EXISTS visits (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             patient_id INTEGER NOT NULL,
             visit_date TEXT NOT NULL,
-            treatment TEXT,
-            next_visit TEXT,
+            visit_details TEXT,
+            treatment_performed TEXT,
+            next_appointment TEXT,
             FOREIGN KEY(patient_id) REFERENCES patients(id) ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS patient_files (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             patient_id INTEGER NOT NULL,
-            file_path TEXT NOT NULL,
             file_type TEXT,
+            file_name TEXT,
+            file_path TEXT NOT NULL,
+            upload_date TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(patient_id) REFERENCES patients(id) ON DELETE CASCADE
         );
         """
