@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     QFormLayout,
     QLineEdit,
     QPushButton,
+    QTextEdit,
 )
 
 from ..database.database_manager import get_connection
@@ -23,6 +24,7 @@ class VisitDialog(QDialog):
         self.date_edit = QDateEdit()
         self.date_edit.setCalendarPopup(True)
         self.date_edit.setDate(QDate.currentDate())
+        self.details_edit = QTextEdit()
         self.treatment_edit = QLineEdit()
         self.next_date_edit = QDateEdit()
         self.next_date_edit.setCalendarPopup(True)
@@ -31,6 +33,7 @@ class VisitDialog(QDialog):
 
         layout = QFormLayout(self)
         layout.addRow("Date", self.date_edit)
+        layout.addRow("Details", self.details_edit)
         layout.addRow("Treatment", self.treatment_edit)
         layout.addRow("Next", self.next_date_edit)
         layout.addRow(save_btn)
@@ -38,10 +41,11 @@ class VisitDialog(QDialog):
     def save(self) -> None:
         with get_connection() as conn:
             conn.execute(
-                "INSERT INTO visits (patient_id, visit_date, treatment, next_visit) VALUES (?, ?, ?, ?)",
+                "INSERT INTO visits (patient_id, visit_date, visit_details, treatment_performed, next_appointment) VALUES (?, ?, ?, ?, ?)",
                 (
                     self.patient_id,
                     self.date_edit.date().toString("yyyy-MM-dd"),
+                    self.details_edit.toPlainText(),
                     self.treatment_edit.text(),
                     self.next_date_edit.date().toString("yyyy-MM-dd"),
                 ),
