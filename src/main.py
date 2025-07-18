@@ -15,7 +15,7 @@ def main() -> None:
     """Launch the Clinical Sabah application."""
     init_schema()
     app = QApplication(sys.argv)
-    style_path = Path("assets/styles/app.qss")
+    style_path = Path(__file__).resolve().parent.parent / "assets" / "styles" / "app.qss"
     if style_path.exists():
         with open(style_path) as f:
             app.setStyleSheet(f.read())
