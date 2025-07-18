@@ -51,4 +51,3 @@ Pull requests and bug reports are welcome. Feel free to open an issue or submit 
 
 ## License
 This project is licensed under the MIT License. See LICENSE for details.
-main
