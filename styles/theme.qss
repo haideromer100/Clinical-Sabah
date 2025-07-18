@@ -1,0 +1,33 @@
+/* Colors */
+@sidebar-bg: #195D7D;
+@sidebar-active: #4DA6C8;
+@text: #C9E3F0;
+@content-bg: #EEF2F5;
+@title-color: #0F2F42;
+@value-color: #134A66;
+
+/* Navigation Pane */
+#NavigationPane { background: @sidebar-bg; border: none; }
+NavigationButton {
+    background: transparent;
+    color: @text;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-align: left;
+    font: 15px "Segoe UI";
+}
+NavigationButton:hover { background: @sidebar-active; color: white; }
+NavigationButton[selected="true"] { background: @sidebar-active; color: white; }
+
+/* Banner */
+#Banner QLabel { color: @value-color; font: 48px "Segoe UI Semibold"; }
+
+/* InfoCard */
+.InfoCard {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    min-width: 160px;
+}
+.InfoCard QLabel.title { color: @title-color; font: 16px; }
+.InfoCard QLabel.value { color: @value-color; font: 32px bold; }

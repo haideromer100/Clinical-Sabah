@@ -8,7 +8,7 @@ else:
     PYQT5 = True
 
 if PYQT5:
-    from src.windows.main_window import MainWindow
+    from src.ui.main_window import MainWindow
 
 
 @pytest.mark.skipif(not PYQT5, reason="PyQt5 not installed")
