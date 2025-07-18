@@ -6,16 +6,14 @@ import hashlib
 import os
 
 
-def hash_password(pwd: str) -> str:
-    """Hash password with SHA-256 and a 16-byte salt."""
-    salt = os.urandom(16)
-    hashed = hashlib.sha256(salt + pwd.encode()).hexdigest()
-    return salt.hex() + hashed
+def hash_password(pwd: str) -> tuple[str, str]:
+    """Return SHA-256 hash and hex salt for ``pwd``."""
+    salt = os.urandom(16).hex()
+    pwd_hash = hashlib.sha256(bytes.fromhex(salt) + pwd.encode()).hexdigest()
+    return pwd_hash, salt
 
 
-def verify_password(pwd: str, hashed: str) -> bool:
-    """Verify a password against the hashed value."""
-    salt = bytes.fromhex(hashed[:32])
-    stored_hash = hashed[32:]
-    new_hash = hashlib.sha256(salt + pwd.encode()).hexdigest()
-    return new_hash == stored_hash
+def verify_password(pwd: str, pwd_hash: str, salt: str) -> bool:
+    """Verify ``pwd`` against stored hash and salt."""
+    new_hash = hashlib.sha256(bytes.fromhex(salt) + pwd.encode()).hexdigest()
+    return new_hash == pwd_hash

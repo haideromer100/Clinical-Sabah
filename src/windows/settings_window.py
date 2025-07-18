@@ -47,14 +47,17 @@ class SettingsWindow(QDialog):
             row = conn.execute(
                 "SELECT password FROM users WHERE username='admin'"
             ).fetchone()
-            if row and verify_password(self.old_pwd.text(), row[0]):
-                conn.execute(
-                    "UPDATE users SET password=? WHERE username='admin'",
-                    (hash_password(self.new_pwd.text()),),
-                )
-                QMessageBox.information(self, "Success", "Password changed")
-            else:
-                QMessageBox.warning(self, "Error", "Old password incorrect")
+            if row:
+                stored_hash, salt = row[0].split(":")
+                if verify_password(self.old_pwd.text(), stored_hash, salt):
+                    new_hash, new_salt = hash_password(self.new_pwd.text())
+                    conn.execute(
+                        "UPDATE users SET password=? WHERE username='admin'",
+                        (f"{new_hash}:{new_salt}",),
+                    )
+                    QMessageBox.information(self, "Success", "Password changed")
+                    return
+            QMessageBox.warning(self, "Error", "Old password incorrect")
 
     def backup_db(self) -> None:
         dest_dir = Path("data/backups")
