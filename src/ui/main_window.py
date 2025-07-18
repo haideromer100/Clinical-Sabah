@@ -20,7 +20,9 @@ from .settings_view import SettingsView
 
 
 class NavigationButton(QPushButton):
-    def __init__(self, text: str, icon: str, key: str, parent: QWidget | None = None) -> None:
+    def __init__(
+        self, text: str, icon: str, key: str, parent: QWidget | None = None
+    ) -> None:
         super().__init__(text, parent)
         self.key = key
         self.setIcon(QIcon(icon))
@@ -37,7 +39,9 @@ class NavigationButton(QPushButton):
 class NavigationPane(QWidget):
     page_selected = pyqtSignal(str)
 
-    def __init__(self, items: list[tuple[str, str, str]], parent: QWidget | None = None) -> None:
+    def __init__(
+        self, items: list[tuple[str, str, str]], parent: QWidget | None = None
+    ) -> None:
         super().__init__(parent)
         self.setObjectName("NavigationPane")
         layout = QVBoxLayout(self)
@@ -73,6 +77,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Clinical Sabah")
 
         central = QWidget()
+        central.setObjectName("MainArea")
         self.setCentralWidget(central)
         root = QHBoxLayout(central)
         root.setContentsMargins(0, 0, 0, 0)
@@ -80,9 +85,9 @@ class MainWindow(QMainWindow):
         self.sidebar = NavigationPane(
             [
                 ("Dashboard", ":/icons/home.svg", "dashboard"),
-                ("Patients", ":/icons/user.svg", "patients"),
-                ("Visits", ":/icons/calendar.svg", "visits"),
-                ("Reports", ":/icons/report.svg", "reports"),
+                ("Patients", ":/icons/patients.svg", "patients"),
+                ("Visits", ":/icons/visits.svg", "visits"),
+                ("Reports", ":/icons/reports.svg", "reports"),
                 ("Settings", ":/icons/settings.svg", "settings"),
             ]
         )

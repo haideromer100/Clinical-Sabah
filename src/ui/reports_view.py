@@ -6,5 +6,6 @@ from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget
 class ReportsView(QWidget):
     def __init__(self) -> None:
         super().__init__()
+        self.setObjectName("ReportsView")
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("Reports View"))
