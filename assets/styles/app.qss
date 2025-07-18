@@ -1,24 +1,31 @@
-/* Application Style */
-QMainWindow, QWidget {
-    background: #FFFFFF;
-    font-family: Arial, sans-serif;
-}
+/* Colors */
+@blue:  #195D7D;   /* sidebar */
+@blue-light: #226F94;
+@blue-dark: #134A66;
+@text:  #0F2F42;
+@grey-bg: #EAF0F5;
 
-QPushButton {
-    background-color: #1976D2;
-    color: white;
+/* Sidebar */
+#Sidebar { background: @blue; border: none; }
+SidebarButton {
+    background: transparent;
+    color: #C9E3F0;
+    padding: 10px 24px;
     border-radius: 6px;
-    padding: 4px 8px;
+    text-align: left;
+    font: 15px "Segoe UI";
 }
+SidebarButton:hover,
+SidebarButton[selected="true"] { background: @blue-light; color: white; }
 
-QPushButton:hover {
-    background-color: #1E88E5;
+/* Dashboard */
+#Banner { background: transparent; }
+#Banner QLabel { color: @blue-dark; font: 48px "Segoe UI Semibold"; }
+.InfoCard {
+    background: white;
+    border-radius: 8px;
+    padding: 24px 32px;
+    min-width: 180px;
 }
-
-QLineEdit, QPlainTextEdit, QDateEdit {
-    border: 1px solid #CCCCCC;
-    padding: 4px;
-    border-radius: 4px;
-}
-
-/* Add more styling as needed */
+.InfoCard QLabel.title { color: @text; font: 16px; }
+.InfoCard QLabel.value { color: @blue-dark; font: 40px bold; }

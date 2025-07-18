@@ -1,53 +1,80 @@
-"""Main application window."""
+"""Main application window with sidebar navigation."""
 
 from __future__ import annotations
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QAction,
-    QDockWidget,
-    QListWidget,
+    QHBoxLayout,
+    QLabel,
     QMainWindow,
-    QMessageBox,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget,
 )
 
-from ..database.database_manager import get_connection
-from .patient_entry_window import PatientEntryWindow
-from .patient_list_window import PatientListWindow
-from .settings_window import SettingsWindow
+from ..widgets.sidebar import Sidebar
+from .pages.dashboard_page import DashboardPage
+from .patient_list_window import PatientListWindow as PatientListPage
+
+
+class VisitsPage(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        QVBoxLayout(self).addWidget(QLabel("Visits Page"))
+
+
+class ReportsPage(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        QVBoxLayout(self).addWidget(QLabel("Reports Page"))
+
+
+class SettingsPage(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        QVBoxLayout(self).addWidget(QLabel("Settings Page"))
 
 
 class MainWindow(QMainWindow):
-    """Main window with sidebar navigation."""
+    """Main window using a fixed sidebar and stacked pages."""
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("Clinical Sabah")
-        self.resize(800, 600)
-        self.setup_sidebar()
+        central = QWidget()
+        self.setCentralWidget(central)
+        root = QHBoxLayout(central)
 
-    def setup_sidebar(self) -> None:
-        dock = QDockWidget("Menu", self)
-        self.addDockWidget(Qt.LeftDockWidgetArea, dock)
-        menu = QListWidget()
-        menu.addItems(["Patients", "Add Patient", "Settings", "Logout"])
-        menu.currentRowChanged.connect(self.handle_menu)
-        dock.setWidget(menu)
+        self.sidebar = Sidebar(
+            [
+                ("Dashboard", ":/icons/home.svg", "dashboard"),
+                ("Patients", ":/icons/patients.svg", "patients"),
+                ("Visits", ":/icons/visits.svg", "visits"),
+                ("Reports", ":/icons/reports.svg", "reports"),
+                ("Settings", ":/icons/settings.svg", "settings"),
+            ]
+        )
+        root.addWidget(self.sidebar)
 
-    def handle_menu(self, index: int) -> None:
-        if index == 0:
-            self.patients()
-        elif index == 1:
-            self.add_patient()
-        elif index == 2:
-            SettingsWindow(self).exec_()
-        elif index == 3:
+        self.stack = QStackedWidget()
+        root.addWidget(self.stack, 1)
+        self.pages = {
+            "dashboard": DashboardPage(),
+            "patients": PatientListPage(),
+            "visits": VisitsPage(),
+            "reports": ReportsPage(),
+            "settings": SettingsPage(),
+        }
+        for p in self.pages.values():
+            self.stack.addWidget(p)
+
+        self.sidebar.page_selected.connect(self._set_page)
+        self.sidebar.set_current("dashboard")
+
+    def _set_page(self, key: str) -> None:
+        if key == "logout":
             self.close()
-
-    def patients(self) -> None:
-        self.list_win = PatientListWindow(self)
-        self.list_win.show()
-
-    def add_patient(self) -> None:
-        dlg = PatientEntryWindow(self)
-        dlg.exec_()
+            return
+        widget = self.pages.get(key)
+        if widget:
+            self.stack.setCurrentWidget(widget)
