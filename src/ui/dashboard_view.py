@@ -10,6 +10,12 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from ..utils.dashboard_stats import (
+    get_patient_count,
+    get_pending_reports,
+    get_today_visits,
+)
+
 
 class BannerWidget(QWidget):
     """Top banner with shield icon and protection text."""
@@ -43,9 +49,27 @@ class DashboardView(QWidget):
 
         cards = QHBoxLayout()
         cards.setSpacing(20)
-        cards.addWidget(self._card(":/icons/user.svg", "Patients", "125"))
-        cards.addWidget(self._card(":/icons/calendar.svg", "Today's Visits", "4"))
-        cards.addWidget(self._card(":/icons/report.svg", "Reports", "2 pending"))
+        cards.addWidget(
+            self._card(
+                ":/icons/patients.svg",
+                "Patients",
+                str(get_patient_count()),
+            )
+        )
+        cards.addWidget(
+            self._card(
+                ":/icons/visits.svg",
+                "Today's Visits",
+                str(get_today_visits()),
+            )
+        )
+        cards.addWidget(
+            self._card(
+                ":/icons/reports.svg",
+                "Reports",
+                f"{get_pending_reports()} pending",
+            )
+        )
         layout.addLayout(cards)
         layout.addStretch()
 

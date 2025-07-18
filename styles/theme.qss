@@ -1,33 +1,47 @@
-/* Colors */
-@sidebar-bg: #195D7D;
-@sidebar-active: #4DA6C8;
-@text: #C9E3F0;
-@content-bg: #EEF2F5;
-@title-color: #0F2F42;
-@value-color: #134A66;
+/* Sidebar colors */
+/* Using comments for reference only */
+/* sidebar gradient start: #234568 */
+/* sidebar gradient end:   #1A3450 */
+/* sidebar hover:          #29527A */
+/* text color:             #E8EEF2 */
+/* content background:     #F4F6F8 */
+/* title color:            #0F2F42 */
+/* value color:            #134A66 */
 
 /* Navigation Pane */
-#NavigationPane { background: @sidebar-bg; border: none; }
+#NavigationPane {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                               stop:0 #234568, stop:1 #1A3450);
+    border: none;
+}
 NavigationButton {
     background: transparent;
-    color: @text;
-    padding: 10px 20px;
-    border-radius: 4px;
+    color: #E8EEF2;
+    padding: 12px 20px;
     text-align: left;
-    font: 15px "Segoe UI";
+    font: 14px "Segoe UI", "Arial";
+    border: none;
 }
-NavigationButton:hover { background: @sidebar-active; color: white; }
-NavigationButton[selected="true"] { background: @sidebar-active; color: white; }
+NavigationButton:hover {
+    background: #29527A;
+    color: white;
+}
+NavigationButton[selected="true"] {
+    background: #1A3450;
+    color: white;
+}
 
 /* Banner */
-#Banner QLabel { color: @value-color; font: 48px "Segoe UI Semibold"; }
+#Banner QLabel { color: #134A66; font: 48px "Segoe UI Semibold"; }
 
 /* InfoCard */
+#MainArea { background: #F4F6F8; }
+
 .InfoCard {
     background: white;
     border-radius: 8px;
     padding: 24px;
     min-width: 160px;
 }
-.InfoCard QLabel.title { color: @title-color; font: 16px; }
-.InfoCard QLabel.value { color: @value-color; font: 32px bold; }
+.InfoCard QLabel.title { color: #0F2F42; font: 16px; }
+.InfoCard QLabel.value { color: #134A66; font: 32px bold; }
