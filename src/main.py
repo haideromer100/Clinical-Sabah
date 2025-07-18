@@ -17,9 +17,7 @@ def main() -> None:
     init_schema()
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
     app = QApplication(sys.argv)
-    style_path = (
-        Path(__file__).resolve().parent.parent / "assets" / "styles" / "app.qss"
-    )
+    style_path = Path(__file__).resolve().parent.parent / "styles" / "theme.qss"
     if style_path.exists():
         with open(style_path) as f:
             app.setStyleSheet(f.read())

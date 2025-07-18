@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
 
 from ..database.database_manager import get_connection
 from ..utils.security import verify_password
-from .main_window import MainWindow
+from ..ui.main_window import MainWindow
 from .registration_window import RegistrationWindow
 
 
