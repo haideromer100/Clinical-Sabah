@@ -3,36 +3,16 @@
 from __future__ import annotations
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
-    QHBoxLayout,
-    QLabel,
-    QMainWindow,
-    QStackedWidget,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QStackedWidget, QWidget
 
 from ..widgets.sidebar import Sidebar
-from .pages.dashboard_page import DashboardPage
-from .patient_list_window import PatientListWindow as PatientListPage
-
-
-class VisitsPage(QWidget):
-    def __init__(self) -> None:
-        super().__init__()
-        QVBoxLayout(self).addWidget(QLabel("Visits Page"))
-
-
-class ReportsPage(QWidget):
-    def __init__(self) -> None:
-        super().__init__()
-        QVBoxLayout(self).addWidget(QLabel("Reports Page"))
-
-
-class SettingsPage(QWidget):
-    def __init__(self) -> None:
-        super().__init__()
-        QVBoxLayout(self).addWidget(QLabel("Settings Page"))
+from .pages import (
+    DashboardPage,
+    PatientListPage,
+    ReportsPage,
+    SettingsPage,
+    VisitsPage,
+)
 
 
 class MainWindow(QMainWindow):
