@@ -37,6 +37,10 @@ class PatientEntryWindow(QDialog):
         save_btn.clicked.connect(self.save)
         visit_btn = QPushButton("Add Visit")
         visit_btn.clicked.connect(self.add_visit)
+        xray_btn = QPushButton("Upload X-Ray")
+        xray_btn.clicked.connect(self.upload_xray)
+        lab_btn = QPushButton("Upload Lab Result")
+        lab_btn.clicked.connect(self.upload_lab)
 
         layout = QFormLayout(self)
         layout.addRow("Serial No.", self.serial_edit)
@@ -49,6 +53,7 @@ class PatientEntryWindow(QDialog):
         layout.addRow("Medical History", self.med_history_edit)
         layout.addRow("Drugs Taken", self.drugs_edit)
         layout.addRow(save_btn, visit_btn)
+        layout.addRow(xray_btn, lab_btn)
 
         if patient_id:
             self.load_patient()
@@ -140,3 +145,41 @@ class PatientEntryWindow(QDialog):
             self.save()
         if self.patient_id:
             VisitDialog(self.patient_id, self).exec_()
+
+    def _store_file(self, path: str, file_type: str) -> None:
+        import shutil
+        from pathlib import Path
+
+        serial = self.serial_edit.text() or str(self.patient_id)
+        base = Path("data/patients") / serial / file_type
+        base.mkdir(parents=True, exist_ok=True)
+        src = Path(path)
+        dest = base / src.name
+        shutil.copy(src, dest)
+        with get_connection() as conn:
+            conn.execute(
+                "INSERT INTO patient_files (patient_id, file_type, file_name, file_path) VALUES (?, ?, ?, ?)",
+                (self.patient_id, file_type, src.name, str(dest)),
+            )
+
+    def upload_xray(self) -> None:
+        from PyQt5.QtWidgets import QFileDialog
+
+        if not self.patient_id:
+            self.save()
+        if not self.patient_id:
+            return
+        fname, _ = QFileDialog.getOpenFileName(self, "Select X-Ray")
+        if fname:
+            self._store_file(fname, "xrays")
+
+    def upload_lab(self) -> None:
+        from PyQt5.QtWidgets import QFileDialog
+
+        if not self.patient_id:
+            self.save()
+        if not self.patient_id:
+            return
+        fname, _ = QFileDialog.getOpenFileName(self, "Select Lab Result")
+        if fname:
+            self._store_file(fname, "lab_results")
