@@ -1,94 +1,34 @@
 from __future__ import annotations
 
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import (
-    QHBoxLayout,
-    QMainWindow,
-    QStackedWidget,
-    QVBoxLayout,
-    QWidget,
-    QPushButton,
-    QLabel,
+from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QStackedWidget, QWidget
+
+from ..pages import (
+    DashboardPage,
+    PatientListPage,
+    ReportsPage,
+    SettingsPage,
+    VisitsPage,
 )
-from PyQt5.QtGui import QIcon
-
-from .dashboard_view import DashboardView
-from .patients_view import PatientsView
-from .visits_view import VisitsView
-from .reports_view import ReportsView
-from .settings_view import SettingsView
-
-
-class NavigationButton(QPushButton):
-    def __init__(
-        self, text: str, icon: str, key: str, parent: QWidget | None = None
-    ) -> None:
-        super().__init__(text, parent)
-        self.key = key
-        self.setIcon(QIcon(icon))
-        self.setCheckable(True)
-        self.setProperty("selected", False)
-
-    def set_selected(self, state: bool) -> None:
-        self.setChecked(state)
-        self.setProperty("selected", "true" if state else "false")
-        self.style().unpolish(self)
-        self.style().polish(self)
-
-
-class NavigationPane(QWidget):
-    page_selected = pyqtSignal(str)
-
-    def __init__(
-        self, items: list[tuple[str, str, str]], parent: QWidget | None = None
-    ) -> None:
-        super().__init__(parent)
-        self.setObjectName("NavigationPane")
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(2)
-        self.buttons: dict[str, NavigationButton] = {}
-        for text, icon, key in items:
-            btn = NavigationButton(text, icon, key, self)
-            btn.clicked.connect(self._on_click)
-            layout.addWidget(btn)
-            self.buttons[key] = btn
-        layout.addStretch()
-
-    def _on_click(self) -> None:
-        btn: NavigationButton = self.sender()  # type: ignore
-        if not isinstance(btn, NavigationButton):
-            return
-        self.set_current(btn.key)
-        self.page_selected.emit(btn.key)
-
-    def set_current(self, key: str) -> None:
-        for b in self.buttons.values():
-            b.set_selected(False)
-        if key in self.buttons:
-            self.buttons[key].set_selected(True)
+from ..widgets.sidebar import Sidebar
 
 
 class MainWindow(QMainWindow):
-    """Main application window with sidebar navigation."""
+    """Main window with sidebar navigation."""
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
         self.setWindowTitle("Clinical Sabah")
-
         central = QWidget()
-        central.setObjectName("MainArea")
         self.setCentralWidget(central)
         root = QHBoxLayout(central)
-        root.setContentsMargins(0, 0, 0, 0)
 
-        self.sidebar = NavigationPane(
+        self.sidebar = Sidebar(
             [
-                ("Dashboard", ":/icons/home.svg", "dashboard"),
-                ("Patients", ":/icons/patients.svg", "patients"),
-                ("Visits", ":/icons/visits.svg", "visits"),
-                ("Reports", ":/icons/reports.svg", "reports"),
-                ("Settings", ":/icons/settings.svg", "settings"),
+                ("🏠 Dashboard", None, "dashboard"),
+                ("👤 Patients", None, "patients"),
+                ("📅 Visits", None, "visits"),
+                ("📊 Reports", None, "reports"),
+                ("⚙ Settings", None, "settings"),
             ]
         )
         root.addWidget(self.sidebar)
@@ -97,20 +37,26 @@ class MainWindow(QMainWindow):
         root.addWidget(self.stack, 1)
 
         self.pages = {
-            "dashboard": DashboardView(),
-            "patients": PatientsView(),
-            "visits": VisitsView(),
-            "reports": ReportsView(),
-            "settings": SettingsView(),
+            "dashboard": DashboardPage(),
+            "patients": PatientListPage(),
+            "visits": VisitsPage(),
+            "reports": ReportsPage(),
+            "settings": SettingsPage(),
         }
         for page in self.pages.values():
             self.stack.addWidget(page)
 
-        self.sidebar.page_selected.connect(self.show_page)
+        self.sidebar.page_selected.connect(self._set_page)
         self.sidebar.set_current("dashboard")
-        self.stack.setCurrentWidget(self.pages["dashboard"])
 
-    def show_page(self, key: str) -> None:
+    def _set_page(self, key: str) -> None:
+        if key == "logout":
+            self.close()
+            return
         widget = self.pages.get(key)
         if widget:
+            if hasattr(widget, "load"):
+                widget.load()  # type: ignore[attr-defined]
+            if hasattr(widget, "refresh"):
+                widget.refresh()  # type: ignore[attr-defined]
             self.stack.setCurrentWidget(widget)

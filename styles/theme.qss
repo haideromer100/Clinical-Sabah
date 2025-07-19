@@ -1,47 +1,14 @@
-/* Sidebar colors */
-/* Using comments for reference only */
-/* sidebar gradient start: #234568 */
-/* sidebar gradient end:   #1A3450 */
-/* sidebar hover:          #29527A */
-/* text color:             #E8EEF2 */
-/* content background:     #F4F6F8 */
-/* title color:            #0F2F42 */
-/* value color:            #134A66 */
+/* Sidebar */
+#Sidebar { background:#195D7D; }
+SidebarButton {
+  background:transparent; color:#CDE4F6;
+  padding:10px 24px; border-radius:6px; text-align:left;
+}
+SidebarButton:hover,
+SidebarButton[selected="true"] { background:#4DA6C8; color:#FFF; }
 
-/* Navigation Pane */
-#NavigationPane {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                               stop:0 #234568, stop:1 #1A3450);
-    border: none;
-}
-NavigationButton {
-    background: transparent;
-    color: #E8EEF2;
-    padding: 12px 20px;
-    text-align: left;
-    font: 14px "Segoe UI", "Arial";
-    border: none;
-}
-NavigationButton:hover {
-    background: #29527A;
-    color: white;
-}
-NavigationButton[selected="true"] {
-    background: #1A3450;
-    color: white;
-}
+/* Cards */
+.InfoCard { background:#FFF; border-radius:8px; padding:24px 32px; }
 
 /* Banner */
-#Banner QLabel { color: #134A66; font: 48px "Segoe UI Semibold"; }
-
-/* InfoCard */
-#MainArea { background: #F4F6F8; }
-
-.InfoCard {
-    background: white;
-    border-radius: 8px;
-    padding: 24px;
-    min-width: 160px;
-}
-.InfoCard QLabel.title { color: #0F2F42; font: 16px; }
-.InfoCard QLabel.value { color: #134A66; font: 32px bold; }
+#Banner QLabel { color:#134A66; font:48px "Segoe UI Semibold"; }
