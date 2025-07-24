@@ -22,9 +22,9 @@ class DatabaseManager:
         self.conn.execute("PRAGMA foreign_keys = ON")
         return self.conn
 
-    def __exit__(self, exc_type, exc, tb) -> None:
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         if self.conn:
-            if exc is None:
+            if exc_type is None:
                 self.conn.commit()
             self.conn.close()
             self.conn = None

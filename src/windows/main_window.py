@@ -1,17 +1,14 @@
-"""Main application window with sidebar navigation."""
-
 from __future__ import annotations
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QStackedWidget, QWidget
 
 from ..widgets.sidebar import Sidebar
 from .pages import (
     DashboardPage,
     PatientListPage,
+    VisitsPage,
     ReportsPage,
     SettingsPage,
-    VisitsPage,
 )
 
 
@@ -25,19 +22,18 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         root = QHBoxLayout(central)
 
-        self.sidebar = Sidebar(
-            [
-                ("Dashboard", ":/icons/home.svg", "dashboard"),
-                ("Patients", ":/icons/patients.svg", "patients"),
-                ("Visits", ":/icons/visits.svg", "visits"),
-                ("Reports", ":/icons/reports.svg", "reports"),
-                ("Settings", ":/icons/settings.svg", "settings"),
-            ]
-        )
+        self.sidebar = Sidebar([
+            ("🏠 Dashboard", "dashboard"),
+            ("👤 Patients", "patients"),
+            ("📅 Visits", "visits"),
+            ("📊 Reports", "reports"),
+            ("⚙ Settings", "settings"),
+        ])
         root.addWidget(self.sidebar)
 
         self.stack = QStackedWidget()
         root.addWidget(self.stack, 1)
+
         self.pages = {
             "dashboard": DashboardPage(),
             "patients": PatientListPage(),
@@ -45,8 +41,8 @@ class MainWindow(QMainWindow):
             "reports": ReportsPage(),
             "settings": SettingsPage(),
         }
-        for p in self.pages.values():
-            self.stack.addWidget(p)
+        for page in self.pages.values():
+            self.stack.addWidget(page)
 
         self.sidebar.page_selected.connect(self._set_page)
         self.sidebar.set_current("dashboard")
@@ -55,6 +51,14 @@ class MainWindow(QMainWindow):
         if key == "logout":
             self.close()
             return
+        self.go_to_page(key)
+
+    def go_to_page(self, key: str):
         widget = self.pages.get(key)
         if widget:
+            if hasattr(widget, "load"):
+                widget.load()
+            if hasattr(widget, "refresh"):
+                widget.refresh()
             self.stack.setCurrentWidget(widget)
+        return widget

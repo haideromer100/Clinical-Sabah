@@ -1,31 +1,162 @@
-/* Colors */
-@blue:  #195D7D;   /* sidebar */
-@blue-light: #226F94;
-@blue-dark: #134A66;
-@text:  #0F2F42;
-@grey-bg: #EAF0F5;
+/* ========== Global ========== */
+* {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+}
+QWidget {
+    background: #F5F5F5;
+    color: #0F2F42;
+}
 
-/* Sidebar */
-#Sidebar { background: @blue; border: none; }
-SidebarButton {
+/* ========== Sidebar ========== */
+#Sidebar {
+    background-color: #1b445c;
+    border: none;
+}
+
+#SidebarButton {
     background: transparent;
-    color: #C9E3F0;
-    padding: 10px 24px;
-    border-radius: 6px;
-    text-align: left;
-    font: 15px "Segoe UI";
-}
-SidebarButton:hover,
-SidebarButton[selected="true"] { background: @blue-light; color: white; }
-
-/* Dashboard */
-#Banner { background: transparent; }
-#Banner QLabel { color: @blue-dark; font: 48px "Segoe UI Semibold"; }
-.InfoCard {
-    background: white;
+    color: #D6EAF8;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
     border-radius: 8px;
-    padding: 24px 32px;
-    min-width: 180px;
+    text-align: left;
 }
-.InfoCard QLabel.title { color: @text; font: 16px; }
-.InfoCard QLabel.value { color: @blue-dark; font: 40px bold; }
+#SidebarButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+#SidebarButton[selected="true"] {
+    background-color: #E8F6FF;
+    color: #1b445c;
+    font-weight: bold;
+}
+
+/* ========== Dashboard area ========== */
+#DashboardPage {
+    background: #F5F5F5;
+}
+
+/* اللوحة البيضاء الرئيسية */
+#MainPanel {
+    background: #FFFFFF;
+    border-radius: 26px;
+    border: 1px solid #E3E8F0;
+}
+
+/* ========== Banner ========== */
+#BannerWidget {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0,
+                                stop:0 #1F6A94, stop:1 #5AC2E3);
+    border-radius: 24px;
+}
+#BannerIcon {
+    font-size: 60px;
+    color: #FFFFFF;
+    background: transparent;
+}
+#BannerText {
+    color: #FFFFFF;
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: transparent;
+}
+
+/* ========== Info Cards ========== */
+#InfoCard {
+    background: #FFFFFF;
+    border-radius: 18px;
+    border: 1px solid #DFE8F1;
+    min-width: 200px;
+    min-height: 180px;
+    max-width: 200px;
+    max-height: 180px;
+    padding: 20px;
+    qproperty-alignment: AlignCenter;
+}
+#InfoCard:hover {
+    border-color: #B5DEFc;
+}
+#CardIcon {
+    font-size: 38px;
+    color: #0B7285;
+    background: transparent;
+}
+#CardTitle {
+    font-size: 17px;
+    font-weight: 600;
+    color: #0F2F42;
+    background: transparent;
+}
+#CardValue {
+    font-size: 36px;
+    font-weight: 700;
+    color: #195D7D;
+    background: transparent;
+}
+#CardSubtitle {
+    font-size: 15px;
+    color: #667788;
+    background: transparent;
+}
+
+/* ========== Tables ========== */
+QTableWidget, QTableView {
+    background: #FFFFFF;
+    border: 1px solid #D9E2EC;
+    border-radius: 10px;
+    gridline-color: #E1E7ED;
+}
+QHeaderView::section {
+    background: #195D7D;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: 8px;
+    border: none;
+}
+QTableWidget::item {
+    padding: 10px;
+}
+QTableWidget::item:selected {
+    background: #D0EBFF;
+    color: #195D7D;
+}
+
+/* ========== Buttons ========== */
+QPushButton {
+    background: #4DA6C8;
+    color: #FFFFFF;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 600;
+    border: none;
+}
+QPushButton:hover { background: #3C91B5; }
+QPushButton:pressed { background: #337DA0; }
+
+/* ========== ComboBox ========== */
+QComboBox {
+    background: #FFFFFF;
+    padding: 6px 12px;
+    border: 1px solid #D9E2EC;
+    border-radius: 8px;
+}
+QComboBox:hover { border-color: #4DA6C8; }
+
+/* Optional scrollbars */
+QScrollBar:vertical, QScrollBar:horizontal {
+    background: #F0F4F8;
+    border-radius: 7px;
+    width: 12px;
+}
+QScrollBar::handle:vertical, QScrollBar::handle:horizontal {
+    background: #BCDFFB;
+    border-radius: 7px;
+    min-height: 25px;
+}
+QScrollBar::add-line, QScrollBar::sub-line {
+    background: none;
+    border: none;
+}

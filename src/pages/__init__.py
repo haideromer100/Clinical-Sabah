@@ -1,11 +1,11 @@
-from .dashboard import DashboardPage
+#from .dashboard import DashboardPage
 from .patient_list import PatientListPage
 from .reports import ReportsPage
 from .settings import SettingsPage
 from .visits import VisitsPage
 
 __all__ = [
-    "DashboardPage",
+#    "DashboardPage",
     "PatientListPage",
     "VisitsPage",
     "ReportsPage",

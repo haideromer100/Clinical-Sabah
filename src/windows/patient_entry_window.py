@@ -9,11 +9,53 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QPushButton,
     QTextEdit,
+    QLabel,
+    QVBoxLayout,
+    QListWidget,
+    QListWidgetItem,
+    QDialogButtonBox,
+    QFileDialog,
 )
 
 from ..database.database_manager import get_connection
 from ..utils.validators import not_empty
 from .visit_dialog import VisitDialog
+
+
+class ToothSurfaceDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Tooth Issue Location")
+        self.setMinimumSize(300, 250)
+        layout = QVBoxLayout(self)
+
+        self.side_combo = QComboBox()
+        self.side_combo.addItems(["Right", "Left"])
+        layout.addWidget(QLabel("Select Side:"))
+        layout.addWidget(self.side_combo)
+
+        self.tooth_combo = QComboBox()
+        self.tooth_combo.addItems([str(i) for i in range(1, 9)])
+        layout.addWidget(QLabel("Select Tooth Number:"))
+        layout.addWidget(self.tooth_combo)
+
+        self.surface_list = QListWidget()
+        self.surface_list.setSelectionMode(QListWidget.MultiSelection)
+        for surface in ["Mesial", "Distal", "Buccal", "Lingual", "Occlusal"]:
+            QListWidgetItem(surface, self.surface_list)
+        layout.addWidget(QLabel("Select Surfaces:"))
+        layout.addWidget(self.surface_list)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    def get_selection(self) -> tuple[str, str, list[str]]:
+        side = self.side_combo.currentText()
+        tooth = self.tooth_combo.currentText()
+        surfaces = [i.text() for i in self.surface_list.selectedItems()]
+        return side, tooth, surfaces
 
 
 class PatientEntryWindow(QDialog):
@@ -33,6 +75,7 @@ class PatientEntryWindow(QDialog):
         self.chief_edit = QTextEdit()
         self.med_history_edit = QTextEdit()
         self.drugs_edit = QTextEdit()
+
         save_btn = QPushButton("Save")
         save_btn.clicked.connect(self.save)
         visit_btn = QPushButton("Add Visit")
@@ -61,7 +104,11 @@ class PatientEntryWindow(QDialog):
     def load_patient(self) -> None:
         with get_connection() as conn:
             row = conn.execute(
-                "SELECT serial_no, name, age, sex, phone, marital_status, chief_complaint, medical_history, drug_taken FROM patients WHERE id=?",
+                """
+                SELECT serial_no, name, age, sex, phone, marital_status,
+                       chief_complaint, medical_history, drug_taken
+                FROM patients WHERE id=?
+                """,
                 (self.patient_id,),
             ).fetchone()
             if row:
@@ -107,7 +154,12 @@ class PatientEntryWindow(QDialog):
         with get_connection() as conn:
             if self.patient_id:
                 conn.execute(
-                    "UPDATE patients SET serial_no=?, name=?, age=?, sex=?, phone=?, marital_status=?, chief_complaint=?, medical_history=?, drug_taken=?, last_modified=CURRENT_TIMESTAMP WHERE id=?",
+                    """
+                    UPDATE patients SET serial_no=?, name=?, age=?, sex=?,
+                        phone=?, marital_status=?, chief_complaint=?,
+                        medical_history=?, drug_taken=?, last_modified=CURRENT_TIMESTAMP
+                    WHERE id=?
+                    """,
                     (
                         serial_no,
                         name,
@@ -123,7 +175,12 @@ class PatientEntryWindow(QDialog):
                 )
             else:
                 cur = conn.execute(
-                    "INSERT INTO patients (serial_no, name, age, sex, phone, marital_status, chief_complaint, medical_history, drug_taken, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    """
+                    INSERT INTO patients (serial_no, name, age, sex, phone,
+                        marital_status, chief_complaint, medical_history,
+                        drug_taken, created_by)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
                     (
                         serial_no,
                         name,
@@ -163,8 +220,6 @@ class PatientEntryWindow(QDialog):
             )
 
     def upload_xray(self) -> None:
-        from PyQt5.QtWidgets import QFileDialog
-
         if not self.patient_id:
             self.save()
         if not self.patient_id:
@@ -174,8 +229,6 @@ class PatientEntryWindow(QDialog):
             self._store_file(fname, "xrays")
 
     def upload_lab(self) -> None:
-        from PyQt5.QtWidgets import QFileDialog
-
         if not self.patient_id:
             self.save()
         if not self.patient_id:
